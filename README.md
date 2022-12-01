@@ -306,8 +306,9 @@ export default FormRow;
 
 #### 10-B) Alert Component
 
-- right away setup as component
-- create Alert.js in <b>components</b>
+- Create Alert.js in <b>components</b>
+- Setup state setting for Alert component in the Register page.
+- Use case objective: UI component for input validation - show error message when input value is invalid.
 
 ```js
 const Alert = () => {
@@ -315,4 +316,45 @@ const Alert = () => {
 };
 
 export default Alert;
+```
+
+#### 10-C) Register Page Enhancement: Toggle Login vs. Register Fields
+
+- Toggle is based on condition: Is user a member?
+- If member = () => Login page, if not () => Register
+
+```js
+const toggleMember = () => {
+  setValues({ ...values, isMember: !values.isMember });
+};
+
+return (
+  <Wrapper>
+    {/* control h3 */}
+
+    <h3>{values.isMember ? "Login" : "Register"}</h3>
+
+    {/* toggle name */}
+
+    {!values.isMember && (
+      <FormRow
+        type="text"
+        name="name"
+        value={values.name}
+        handleChange={handleChange}
+      />
+    )}
+
+    {/* right after submit btn */}
+    {/* toggle button */}
+
+    <p>
+      {values.isMember ? "Not a member yet?" : "Already a member?"}
+
+      <button type="button" onClick={toggleMember} className="member-btn">
+        {values.isMember ? "Register" : "Login"}
+      </button>
+    </p>
+  </Wrapper>
+);
 ```

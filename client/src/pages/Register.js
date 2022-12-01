@@ -1,5 +1,5 @@
 import React from "react";
-import { Logo, FrontRow } from "../component";
+import { Logo, FrontRow, Alert } from "../component";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Wrapper from "../assets/wrappers/RegisterPage";
@@ -10,6 +10,8 @@ const initialState = {
   email: "",
   password: "",
   isMember: true,
+  showAlert: false,
+  errorType: "Invalid username",
 };
 // if possible prefer local state
 // global state
@@ -29,18 +31,25 @@ const Register = () => {
     //setValues(e.target);
   };
 
+  const toggleMember = () => {
+    setValues({ ...values, isMember: !values.isMember });
+  };
+
   return (
     <Wrapper className="full-page">
       <form className="form" onSubmit={submitHandler}>
         <Logo />
-        <h3>Login</h3>
+        <h3>{values.isMember ? "Login" : "Register"}</h3>
+        {values.showAlert && <Alert errorType={values.errorType} />}
         {/* username field */}
-        <FrontRow
-          type="text"
-          name="name"
-          value={values.name}
-          changeHandler={changeHandler}
-        />
+        {!values.isMember && (
+          <FrontRow
+            type="text"
+            name="name"
+            value={values.name}
+            changeHandler={changeHandler}
+          />
+        )}
 
         {/* email field */}
         <FrontRow
@@ -57,12 +66,16 @@ const Register = () => {
           changeHandler={changeHandler}
         />
 
+        {/* toggle function */}
+
         <button type="submit" className="btn btn-block">
           Submit
         </button>
         <p>
-          Not a member yet?
-          <Link to="/Register"> Register</Link>
+          {values.isMember ? "Not a member yet?" : "Already a member?"}
+          <button type="button" onClick={toggleMember} className="member-btn">
+            {values.isMember ? "Register" : "Login"}
+          </button>
         </p>
       </form>
     </Wrapper>
