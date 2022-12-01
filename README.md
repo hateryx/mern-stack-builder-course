@@ -277,10 +277,10 @@ function Register() {
 
 #### 10-A) Register Page: FormRow Component
 
-- create FormRow.js in <b>components</b>
-- setup import/export
-- setup one for email and password
-- hint "type,name,value"
+- Create FormRow.js in <b>components</b>
+- Setup the component for email and password
+- Transfer/ convert the input from Register into FrontRow component
+- Setup the props for FrontRow "type,name,value"
 
 ```js
 const FormRow = ({ type, name, value, handleChange, labelText }) => {
@@ -302,4 +302,17 @@ const FormRow = ({ type, name, value, handleChange, labelText }) => {
 };
 
 export default FormRow;
+```
+
+#### 10-B) Alert Component
+
+- right away setup as component
+- create Alert.js in <b>components</b>
+
+```js
+const Alert = () => {
+  return <div className="alert alert-danger">alert goes here</div>;
+};
+
+export default Alert;
 ```

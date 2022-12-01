@@ -1,5 +1,5 @@
 import React from "react";
-import { Logo } from "../component";
+import { Logo, FrontRow } from "../component";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Wrapper from "../assets/wrappers/RegisterPage";
@@ -35,20 +35,27 @@ const Register = () => {
         <Logo />
         <h3>Login</h3>
         {/* username field */}
-        <div>
-          <label htmlFor="name" className="form-label">
-            Name
-          </label>
-          <input
-            className="form-input"
-            type="text"
-            value={values.name}
-            name="name"
-            onChange={changeHandler}
-          ></input>
+        <FrontRow
+          type="text"
+          name="name"
+          value={values.name}
+          changeHandler={changeHandler}
+        />
 
-          {/* password field */}
-        </div>
+        {/* email field */}
+        <FrontRow
+          type="email"
+          name="email"
+          value={values.email}
+          changeHandler={changeHandler}
+        />
+        {/* password field */}
+        <FrontRow
+          type="password"
+          name="password"
+          value={values.password}
+          changeHandler={changeHandler}
+        />
 
         <button type="submit" className="btn btn-block">
           Submit

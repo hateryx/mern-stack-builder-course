@@ -16,7 +16,7 @@ const Wrapper = styled.main`
   h3 {
     margin-bottom: 0.5rem;
   }
-  p {
+  p 
     margin-top: 0;
     margin-bottom: 0.5rem;
     color: var(--grey-500);
