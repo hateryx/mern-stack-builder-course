@@ -358,3 +358,172 @@ return (
   </Wrapper>
 );
 ```
+
+#### 11-a) Global Context
+
+- Create <b>context</b> directory in src folder
+- actions.js
+- reducer.js
+- appContext.js - Children is used as it is tantamount to the application.
+
+```js
+import React, { useState, useReducer, useContext } from "react";
+
+export const initialState = {
+  isLoading: false,
+  showAlert: false,
+  alertText: "",
+  alertType: "",
+};
+const AppContext = React.createContext();
+const AppProvider = ({ children }) => {
+  const [state, setState] = useState(initialState);
+
+  return (
+    <AppContext.Provider
+      value={{
+        ...state,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
+};
+// make sure use
+export const useAppContext = () => {
+  return useContext(AppContext);
+};
+
+export { AppProvider };
+```
+
+- Update index.js to wrap App with AppProvider to broadcast the context.
+
+```js
+import { AppProvider } from "./context/appContext";
+
+ReactDOM.render(
+  <React.StrictMode>
+    <AppProvider>
+      <App />
+    </AppProvider>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+```
+
+- Update the Register.js to enable the use of global context. Sampled the showAlert to change it from local to global state.
+
+```js
+import { useAppContext } from "../context/appContext";
+
+const { isLoading, showAlert } = useAppContext();
+```
+
+#### 11-b) Reference: useReducer
+
+- [React Tutorial](https://youtu.be/iZhV0bILFb0)
+- useReducer vs Redux
+- multiple reducers vs one
+
+#### 11-c) Set-up: useReducer
+
+- Define the reducer.js to set-up dispatch function for useReducer
+
+```js
+reducer.js;
+
+const reducer = (state, action) => {
+  throw new Error(`no such action :${action.type}`);
+};
+export default reducer;
+```
+
+- Update the appContext.js to replace useState into useReducer functions
+
+```js
+appContext.js;
+
+import reducer from "./reducer";
+
+const [state, dispatch] = useReducer(reducer, initialState);
+```
+
+#### 12) Building: Display Alert (Part 1)
+
+- Setup action.js for the dispatch function - display alert.
+
+```js
+actions.js;
+
+export const DISPLAY_ALERT = "SHOW_ALERT";
+```
+
+- Update the import of reducer.js and appContext.js to pass data on display alert dispatch
+- Define the displayAlert function as part of global context. Don't forget to update also the AppContext provider.
+
+```js
+appContext.js;
+
+const displayAlert = () => {
+  dispatch({ type: DISPLAY_ALERT });
+};
+```
+
+- Define the conditions for display alert to dispatch.
+
+```js
+reducer.js;
+
+if (action.type === DISPLAY_ALERT) {
+  return {
+    ...state,
+    showAlert: true,
+    alertType: "danger",
+    alertText: "Please provide all values!",
+  };
+}
+```
+
+- Update the Alert.js to enable dynamic/ conditional output using useContext from appContext.js
+
+```js
+Alert.js in Components;
+
+import { useAppContext } from "../context/appContext";
+
+const Alert = () => {
+  const { alertType, alertText } = useAppContext();
+  return <div className={`alert alert-${alertType}`}>{alertText}</div>;
+};
+```
+
+#### 12) Building: Display Alert (Part 2)
+
+- [JS Nuggets - Dynamic Object Keys](https://youtu.be/_qxCYtWm0tw)
+
+- [Update] Register.js : Refactor the changeHandler to optimize setting of state.
+
+```js
+Register.js;
+
+const changeHandler = (e) => {
+  setValues({ ...values, [e.target.name]: e.target.value });
+};
+```
+
+- [Update] Register.js : Added input validation logic to display alert.
+
+```js
+Register.js;
+
+const submitHandler = (e) => {
+  e.preventDefault();
+  const { name, email, password, isMember } = values;
+  if (!email || !password || (!isMember && !name)) {
+    displayAlert();
+    return;
+  }
+  console.log(values);
+};
+```

@@ -1,7 +1,8 @@
-import React from "react";
+import { useAppContext } from "../context/appContext";
 
-const Alert = ({ errorType }) => {
-  return <div className="alert alert-danger">{errorType}</div>;
+const Alert = () => {
+  const { alertType, alertText } = useAppContext();
+  return <div className={`alert alert-${alertType}`}>{alertText}</div>;
 };
 
 export default Alert;
