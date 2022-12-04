@@ -1,4 +1,4 @@
-import { DISPLAY_ALERT } from "./actions";
+import { CLEAR_ALERT, DISPLAY_ALERT } from "./actions";
 
 const reducer = (state, action) => {
   //--- to be defined once actions.js is built
@@ -8,6 +8,14 @@ const reducer = (state, action) => {
       showAlert: true,
       alertType: "danger",
       alertText: "Please provide all values!",
+    };
+  }
+  if (action.type === CLEAR_ALERT) {
+    return {
+      state,
+      showAlert: false,
+      alertType: "",
+      alertText: "",
     };
   }
   //---

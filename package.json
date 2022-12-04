@@ -1,0 +1,21 @@
+{
+  "name": "mern-stack-builder-course",
+  "version": "1.0.0",
+  "description": "#### 1) Setup: React App",
+  "main": "index.js",
+  "type": "module", //import and export enabled (see 37 - ES6 Modules)
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hateryx/mern-stack-builder-course.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hateryx/mern-stack-builder-course/issues"
+  },
+  "homepage": "https://github.com/hateryx/mern-stack-builder-course#readme"
+}
