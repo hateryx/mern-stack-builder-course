@@ -667,3 +667,72 @@ app.listen(port, () => console.log(`Server is listening on port ${port}...`));
 - place it last
 - eventually handle Mongoose Errors, just like in the node-express
 - showcase with async errors
+
+#### ENV Variables
+
+```sh
+npm install dotenv
+```
+
+- import dotenv from 'dotenv'
+- dotenv.config()
+
+- create .env
+- PORT=4000
+- .gitignore
+- /node_modules
+- .env
+
+#### Set-up MongoDB Account
+
+- Configure Network Access - Add IP Access List Entry -> Allow Access Anywhere
+- Connect your application to database!
+- Technical Debt: connection string
+
+#### Connect to MongoDB
+
+- switched back to PORT=5000
+- remove Error from '/'
+
+- existing MongoDB Atlas Account
+
+```sh
+npm install mongoose
+```
+
+- create <b>db</b> folder
+- create connect.js
+- setup connectDB(url)
+- in server.js create start() function
+- get connection string
+- setup as MONGO_URL in .env
+- Update the connection string to include the password and DB name
+
+#### Auth Controller and Route Structure
+
+- Create <b>controllers</b> folder
+- Define authController.js and therein, create async functions for the register, login, updateUser
+
+```js
+export { register, login, updateUser };
+```
+
+- return res.send('function name')
+- create <b>routes</b> folder
+- authRoutes.js
+- setup express router
+- import functions from authController.js
+
+```js
+router.route("/register").post(register);
+router.route("/login").post(login);
+router.route("/updateUser").patch(updateUser);
+
+export default router;
+```
+
+- import authRouter in server.js
+
+```js
+app.use("/api/v1/auth", authRouter);
+```
