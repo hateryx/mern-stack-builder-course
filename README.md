@@ -590,7 +590,7 @@ npm init -y
 node server
 ```
 
-#### ES6 vs CommonJS
+#### 13-Notes) ES6 vs CommonJS
 
 ```js
 CommonJS;
@@ -614,7 +614,7 @@ package.json
 "type":"module"
 ```
 
-#### Nodemon and Basic Express Server
+#### 14) Nodemon and Basic Express Server
 
 ```sh
 npm install nodemon --save-dev
@@ -644,7 +644,7 @@ const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server is listening on port ${port}...`));
 ```
 
-#### Not Found Middleware
+#### 15) Not Found Middleware
 
 - in the root create <b>middleware</b> folder
 - not-found.js
@@ -654,7 +654,7 @@ app.listen(port, () => console.log(`Server is listening on port ${port}...`));
 - make sure to use .js extension
 - place after home route
 
-#### Error Middleware
+#### 16) Error Middleware
 
 - in the middleware create error-handler.js
 - setup function
@@ -668,7 +668,7 @@ app.listen(port, () => console.log(`Server is listening on port ${port}...`));
 - eventually handle Mongoose Errors, just like in the node-express
 - showcase with async errors
 
-#### ENV Variables
+#### 17-A) ENV Variables
 
 ```sh
 npm install dotenv
@@ -683,13 +683,13 @@ npm install dotenv
 - /node_modules
 - .env
 
-#### Set-up MongoDB Account
+#### 17-B) Set-up MongoDB Account
 
 - Configure Network Access - Add IP Access List Entry -> Allow Access Anywhere
 - Connect your application to database!
 - Technical Debt: connection string
 
-#### Connect to MongoDB
+#### 17-C) Connect to MongoDB
 
 - switched back to PORT=5000
 - remove Error from '/'
@@ -708,10 +708,13 @@ npm install mongoose
 - setup as MONGO_URL in .env
 - Update the connection string to include the password and DB name
 
-#### Auth Controller and Route Structure
+#### 17-D) Auth Controller and Route Structure
 
 - Create <b>controllers</b> folder
+
 - Define authController.js and therein, create async functions for the register, login, updateUser
+
+- All controllers should be in async mode
 
 ```js
 export { register, login, updateUser };
@@ -735,4 +738,34 @@ export default router;
 
 ```js
 app.use("/api/v1/auth", authRouter);
+```
+
+#### 17-E) Jobs Controller and Route Structure
+
+- jobsController.js
+- create async functions
+
+```js
+export { createJob, deleteJob, getAllJobs, updateJob, showStats };
+```
+
+- return res.send('function name')
+
+- jobsRoutes.js
+- setup express router
+- import functions from jobsController.js
+
+```js
+router.route("/").post(createJob).get(getAllJobs);
+// remember before :id
+router.route("/stats").get(showStats);
+router.route("/:id").delete(deleteJob).patch(updateJob);
+
+export default router;
+```
+
+- in server.js jobsRouter
+
+```js
+app.use("/api/v1/jobs", jobsRouter);
 ```
