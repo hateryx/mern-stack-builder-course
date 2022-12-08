@@ -21,7 +21,6 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Please provide password"],
-
     minlength: 6,
   },
   lastName: {
@@ -40,4 +39,4 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("User", "UserSchema");
+export default mongoose.model("User", UserSchema);
