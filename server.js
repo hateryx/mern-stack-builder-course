@@ -19,7 +19,6 @@ import jobsRouter from "./routes/jobsRoutes.js";
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  throw new Error("error");
   res.send("Welcome!");
 });
 
