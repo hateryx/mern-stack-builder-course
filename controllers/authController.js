@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-
+import { StatusCodes } from "http-status-codes";
 /* ----prototype version for POSTMAN testing purposes
 
 const register = async (req, res) => {
@@ -11,7 +11,7 @@ const register = async (req, res) => {
 //removed the try catch syntax after installing express async error npm package
 const register = async (req, res) => {
   const user = await User.create(req.body);
-  res.status(201).json({ user });
+  res.status(StatusCodes.CREATED).json({ user });
 };
 
 const login = async (req, res) => {
