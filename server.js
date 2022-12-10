@@ -5,6 +5,9 @@ const app = express();
 import dotenv from "dotenv";
 dotenv.config();
 
+//npm package: express async error
+import "express-async-errors";
+
 //middleware
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
