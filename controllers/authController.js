@@ -8,13 +8,10 @@ const register = async (req, res) => {
 
 */
 
+//removed the try catch syntax after installing express async error npm package
 const register = async (req, res) => {
-  try {
-    const user = await User.create(req.body);
-    res.status(201).json({ user });
-  } catch (error) {
-    res.status(500).json({ msg: "there was an error" });
-  }
+  const user = await User.create(req.body);
+  res.status(201).json({ user });
 };
 
 const login = async (req, res) => {
