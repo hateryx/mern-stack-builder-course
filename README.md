@@ -769,3 +769,83 @@ export default router;
 ```js
 app.use("/api/v1/jobs", jobsRouter);
 ```
+
+#### 18-E) Test Routing thru Postman
+
+- URL global var
+- JOBIFY Collection
+- auth and jobs folders
+- setup routes
+
+#### 19) Build: User Model
+
+- <b>models</b> folder
+- User.js
+- setup schema
+- name, email, password, lastName, location
+- all {type:String}
+
+#### 19-A) Email Validator
+
+```js
+validate:{
+  validator:(field)=> {return 2 > 1},
+  message:'Please provide valid email'
+  }
+```
+
+- Install validator package for email
+  Note: [Validator Package](https://www.npmjs.com/package/validator)
+
+```sh
+npm install validator
+```
+
+- import in User.js
+- validator.isEmail
+
+#### 20) Register User - Initial Setup
+
+- Define UserSchema for Users
+- import User model
+- setup temporary try/catch
+- await User.create(req.body)
+- if success 201 with json({user}) (temp)
+- if error 500 with json({msg:'there was an error'})
+- Test should be through PostMan and checked through MongoDB
+
+#### 21) Pass Error to Error Handler
+
+- next(error)
+
+#### 22) Express-Async-Errors Package
+
+- remove try/catch
+- [Express-Async-Errors](https://www.npmjs.com/package/express-async-errors)
+
+```sh
+npm install express-async-errors
+
+```
+
+- in server.js
+- import 'express-async-errors'
+
+- use throw Error('error') instead of next(error)
+
+#### 23) Http Status Codes
+
+- constants for status codes
+- personal preference
+- provides consistency
+- less bugs
+- easier to read/manage
+
+- [Http Status Codes](https://www.npmjs.com/package/http-status-codes)
+
+```sh
+npm install http-status-codes
+```
+
+- import/setup in authController and error-handler
+- setup defaultError
