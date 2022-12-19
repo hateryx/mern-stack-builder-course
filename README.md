@@ -849,3 +849,108 @@ npm install http-status-codes
 
 - import/setup in authController and error-handler
 - setup defaultError
+
+#### 24) Refactor ErrorHandler Codes
+
+- Create errors folder component
+- Define custom-api, bad-request, not-found, index.js files
+
+- add proper imports
+- setup index.js just like in the front-end
+- import {BadRequestError} in authController
+- gotcha "errors/index.js"
+
+#### 25) Build: Hashing Passwords
+
+- Passwords sent to the database are hashed
+- [bcrypt.js](https://www.npmjs.com/package/bcryptjs)
+
+```sh
+npm install bcryptjs
+```
+
+- User Model
+- import bcrypt from 'bcryptjs'
+- await genSalt(10)
+- await hash(password , salt)
+- await compare(requestPassword , currentPassword)
+- [mongoose middleware](https://mongoosejs.com/docs/middleware.html)
+- UserSchema.pre('save',async function(){
+  "this" points to instance created by UserSchema
+  })
+
+#### 26) Mongoose - Custom Instance Methods
+
+[Custom Instance Methods](https://mongoosejs.com/docs/guide.html#methods)
+
+- UserSchema.methods.createJWT = function(){console.log(this)}
+- register controller
+- right after User.create()
+- invoke user.createJWT()
+
+#### 27) Build: JWT Function
+
+- token
+- [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+
+```sh
+npm install jsonwebtoken
+```
+
+- User Model
+- import jwt from 'jsonwebtoken'
+- jwt.sign(payload,secret,options)
+- createJWT
+
+```js
+return jwt.sign({ userId: this._id }, "jwtSecret", { expiresIn: "1d" });
+
+//per source
+return jwt.sign({ id: this._id }, "jwtSecret", { expiresIn: "1d" });
+```
+
+```js
+return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
+  expiresIn: process.env.JWT_LIFETIME,
+});
+```
+
+#### Update JWT_SECRET and JWT_LIFETIME in the process env
+
+- [Keys Generator](https://www.allkeysgenerator.com/)
+- RESTART SERVER!!!!
+
+#### Update: Exclude Password in the Server Response for Register
+
+- Update the password : {select:false} in User schema model js file
+- complete response
+
+#### NPM Install: Concurrently
+
+- Enable running two (2) terminals concurrently for front-end and back-end
+- [concurrently](https://www.npmjs.com/package/concurrently)
+
+```sh
+npm install concurrently --save-dev
+
+```
+
+- package.json
+
+```js
+// --kill-others switch, all commands are killed if one dies
+// --prefix client - folder
+// cd client && npm start
+// escape quotes
+
+"scripts": {
+    "server": "nodemon server --ignore client",
+    "client": "npm start --prefix client",
+    "start": "concurrently --kill-others-on-fail \"npm run server\" \" npm run client\""
+  },
+```
+
+### Major Section: Connecting Front-end and Back-end
+
+- In the server, the business logic shall be defined
+- In ReactJS, request function shall be defined.
