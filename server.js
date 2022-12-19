@@ -1,4 +1,5 @@
 import express from "express";
+
 const app = express();
 
 //mongo set-up
@@ -22,7 +23,11 @@ import jobsRouter from "./routes/jobsRoutes.js";
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Welcome!");
+  res.json({ msg: "Welcome!" });
+});
+
+app.get("/api/v1", (req, res) => {
+  res.json({ msg: "API!" });
 });
 
 app.use("/api/v1/auth", authRouter);
