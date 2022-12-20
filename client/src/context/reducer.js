@@ -1,4 +1,10 @@
-import { CLEAR_ALERT, DISPLAY_ALERT } from "./actions";
+import {
+  DISPLAY_ALERT,
+  CLEAR_ALERT,
+  REGISTER_USER_BEGIN,
+  REGISTER_USER_SUCCESS,
+  REGISTER_USER_ERROR,
+} from "./actions";
 
 const reducer = (state, action) => {
   //--- to be defined once actions.js is built
