@@ -37,7 +37,7 @@ const Register = () => {
       registerUser(currentUser);
     }
 
-    console.log(values);
+    //console.log(values);
   };
 
   const toggleMember = () => {
