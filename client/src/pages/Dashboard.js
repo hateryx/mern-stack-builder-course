@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 
 const Dashboard = () => {
+  /*
+  // sample code for fetching data
   const fetchData = async () => {
     try {
       const response = await fetch("/api/v1");
@@ -13,7 +15,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, []); */
 
   return <h1>Dashboard</h1>;
 };
