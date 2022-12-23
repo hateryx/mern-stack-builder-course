@@ -24,7 +24,7 @@ const initialState = {
   user: user ? JSON.parse(user) : null,
   token: token,
   userLocation: userLocation || "",
-  jobLocation: jobLocation || "",
+  jobLocation: userLocation || "",
 };
 
 const AppContext = React.createContext();
