@@ -1,5 +1,4 @@
 import express from "express";
-
 const app = express();
 
 //mongo set-up
@@ -9,9 +8,8 @@ dotenv.config();
 //npm package: express async error
 import "express-async-errors";
 
-//middleware
-import notFoundMiddleware from "./middleware/not-found.js";
-import errorHandlerMiddleware from "./middleware/error-handler.js";
+//npm package: morgan
+import morgan from "morgan";
 
 //mongoDB connection - db and authenticateUser
 import connectDB from "./db/connect.js";
@@ -19,6 +17,14 @@ import connectDB from "./db/connect.js";
 // routers
 import authRouter from "./routes/authRoutes.js";
 import jobsRouter from "./routes/jobsRoutes.js";
+
+//middleware
+import notFoundMiddleware from "./middleware/not-found.js";
+import errorHandlerMiddleware from "./middleware/error-handler.js";
+
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
 
 app.use(express.json());
 
