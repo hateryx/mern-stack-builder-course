@@ -23,8 +23,8 @@ const initialState = {
   alertType: "",
   user: user ? JSON.parse(user) : null,
   token: token,
-  userLocation: userLocation,
-  jobLocation: userLocation,
+  userLocation: userLocation || "",
+  jobLocation: jobLocation || "",
 };
 
 const AppContext = React.createContext();
