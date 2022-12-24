@@ -21,7 +21,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   // global context and useNavigate later
-  const { user, isLoading, showAlert, displayAlert, registerUser } =
+  const { user, isLoading, showAlert, displayAlert, registerUser, loginUser } =
     useAppContext();
 
   const changeHandler = (e) => {
@@ -37,7 +37,7 @@ const Register = () => {
     }
     const currentUser = { name, email, password };
     if (isMember) {
-      console.log("Already a member");
+      loginUser(currentUser);
     } else {
       registerUser(currentUser);
     }
