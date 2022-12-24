@@ -888,7 +888,7 @@ npm install bcryptjs
 - right after User.create()
 - invoke user.createJWT()
 
-#### 27) Build: JWT Function
+#### 27-a) Build: JWT Function
 
 - token
 - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
@@ -915,17 +915,17 @@ return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
 });
 ```
 
-#### Update JWT_SECRET and JWT_LIFETIME in the process env
+#### 27-b) Update JWT_SECRET and JWT_LIFETIME in the process env
 
 - [Keys Generator](https://www.allkeysgenerator.com/)
 - RESTART SERVER!!!!
 
-#### Update: Exclude Password in the Server Response for Register
+#### 27-c) Update: Exclude Password in the Server Response for Register
 
 - Update the password : {select:false} in User schema model js file
 - complete response
 
-#### NPM Install: Concurrently
+#### 28) NPM Install: Concurrently
 
 - Enable running two (2) terminals concurrently for front-end and back-end
 - [concurrently](https://www.npmjs.com/package/concurrently)
@@ -955,7 +955,7 @@ npm install concurrently --save-dev
 - In the server, the business logic shall be defined
 - In ReactJS, request function shall be defined.
 
-#### Axios
+#### 29) NPM Install: Axios (client)
 
 - [axios docs](https://axios-http.com/docs/intro)
 - stop app
@@ -968,7 +968,7 @@ npm install axios
 - cd ..
 - restart app
 
-#### Register User - Setup
+#### 30-A) Build Connection: Register User - Setup
 
 ```js
 appContext.js;
@@ -1011,7 +1011,7 @@ return (
 );
 ```
 
-#### Register User - Complete
+#### 30-B) Build Connection: Register User - Complete
 
 ```js
 appContext.js;
@@ -1078,3 +1078,114 @@ if (action.type === REGISTER_USER_ERROR) {
   };
 }
 ```
+
+#### 31) Update Register.js: Navigate To Dashboard
+
+```js
+Register.js;
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+const Register = () => {
+  const { user } = useAppContext();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    }
+  }, [user, navigate]);
+};
+```
+
+#### 32) Build: Access to Local Storage
+
+```js
+appContext.js;
+const addUserToLocalStorage = ({ user, token, location }) => {
+  localStorage.setItem("user", JSON.stringify(user));
+  localStorage.setItem("token", token);
+  localStorage.setItem("location", location);
+};
+
+const removeUserFromLocalStorage = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("location");
+};
+
+const registerUser = async (currentUser) => {
+  // in try block
+  addUserToLocalStorage({
+    user,
+    token,
+    location,
+  });
+};
+
+// set as default
+const token = localStorage.getItem("token");
+const user = localStorage.getItem("user");
+const userLocation = localStorage.getItem("location");
+
+const initialState = {
+  user: user ? JSON.parse(user) : null,
+  token: token,
+  userLocation: userLocation || "",
+  jobLocation: userLocation || "",
+};
+```
+
+#### UnauthenticatedError
+
+- unauthenticated.js in errors
+- import/export
+
+```js
+import { StatusCodes } from "http-status-codes";
+import CustomAPIError from "./custom-api.js";
+
+class UnauthenticatedError extends CustomAPIError {
+  constructor(message) {
+    super(message);
+    this.statusCode = StatusCodes.UNAUTHORIZED;
+  }
+}
+```
+
+#### Compare Password
+
+```js
+User.js in models;
+
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
+};
+```
+
+```js
+authController.js;
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new BadRequestError("Please provide all values");
+  }
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    throw new UnauthenticatedError("Invalid Credentials");
+  }
+  const isPasswordCorrect = await user.comparePassword(password);
+  if (!isPasswordCorrect) {
+    throw new UnauthenticatedError("Invalid Credentials");
+  }
+  const token = user.createJWT();
+  user.password = undefined;
+  res.status(StatusCodes.OK).json({ user, token, location: user.location });
+};
+```
+
+- test in Postman
