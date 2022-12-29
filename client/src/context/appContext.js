@@ -62,7 +62,6 @@ const AppProvider = ({ children }) => {
 
   //fetch function
   const registerUser = async (currentUser) => {
-    //console.log(currentUser);
     dispatch({ type: REGISTER_USER_BEGIN });
     try {
       const response = await axios.post("/api/v1/auth/register", currentUser);
@@ -77,8 +76,6 @@ const AppProvider = ({ children }) => {
         },
       });
       addUserToLocalStorage({ user, token, location });
-
-      //placeholder to addLocalStorage
     } catch (error) {
       console.log(error.response);
       dispatch({
@@ -90,7 +87,27 @@ const AppProvider = ({ children }) => {
   };
 
   const loginUser = async (currentUser) => {
-    console.log(currentUser);
+    dispatch({ type: LOGIN_USER_BEGIN });
+    try {
+      const response = await axios.post("/api/v1/auth/login", currentUser);
+
+      const { user, token, location } = response.data;
+      dispatch({
+        type: LOGIN_USER_SUCCESS,
+        payload: {
+          user,
+          token,
+          location,
+        },
+      });
+      addUserToLocalStorage({ user, token, location });
+    } catch (error) {
+      dispatch({
+        type: LOGIN_USER_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+    clearAlert();
   };
 
   return (
