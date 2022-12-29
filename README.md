@@ -1138,7 +1138,7 @@ const initialState = {
 };
 ```
 
-#### UnauthenticatedError
+#### 33) UnauthenticatedError
 
 - unauthenticated.js in errors
 - import/export
@@ -1155,7 +1155,7 @@ class UnauthenticatedError extends CustomAPIError {
 }
 ```
 
-#### Compare Password
+#### 34) Compare Password
 
 ```js
 User.js in models;
@@ -1189,3 +1189,26 @@ const login = async (req, res) => {
 ```
 
 - test in Postman
+
+### MAJOR BUILD: Nested Pages in React Router 6
+
+#### 35) Dashboard pages
+
+- delete Dashboard.js
+- fix imports/exports
+- replace in home route
+
+```js
+<Route path="/" element={<div>dashboard</div>} />
+```
+
+- create <b>dashboard</b> directory in pages
+- create AddJob,AllJobs,Profile,Stats,SharedLayout, index.js
+- setup basic returns
+
+```js
+return <h1>Add Job Page</h1>;
+```
+
+- export all with index.js (just like components)
+- import all pages in App.js
