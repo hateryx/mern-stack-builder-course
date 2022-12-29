@@ -21,8 +21,15 @@ const Register = () => {
   const navigate = useNavigate();
 
   // global context and useNavigate later
-  const { user, isLoading, showAlert, displayAlert, registerUser, loginUser } =
-    useAppContext();
+  const {
+    user,
+    isLoading,
+    showAlert,
+    displayAlert,
+    registerUser,
+    loginUser,
+    setupUser,
+  } = useAppContext();
 
   const changeHandler = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -35,11 +42,22 @@ const Register = () => {
       displayAlert();
       return;
     }
+
     const currentUser = { name, email, password };
     if (isMember) {
-      loginUser(currentUser);
+      // previous version before refactor:  loginUser(currentUser);
+      setupUser({
+        currentUser,
+        endPoint: "login",
+        alertText: "Login Successful! Redirecting...",
+      });
     } else {
-      registerUser(currentUser);
+      // previous version before refactor:  registerUser(currentUser);
+      setupUser({
+        currentUser,
+        endPoint: "register",
+        alertText: "User created! Redirecting...",
+      });
     }
     //console.log(values);
   };
