@@ -26,7 +26,7 @@ Other minor changes:
 - replace favicon.ico in public
 - resource [Generate Favicons](https://favicon.io/)
 
-#### 2) Set-up: Normalize.css and Global Styles
+#### 2) NPM Install: Normalize.css and Global Styles
 
 - CSS in JS (styled-components)
 - saves times on the setup
@@ -66,7 +66,7 @@ npm install normalize.css
 - import logo.svg and main.svg
 - import Landing in App.js and render
 
-#### 4) Using Styled Components
+#### 4) NPM Install: Styled-Components || Using Styled Components
 
 - CSS in JS
 - Styled Components
