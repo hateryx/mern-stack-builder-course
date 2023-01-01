@@ -126,7 +126,7 @@ Note:
 - A index.js can be created in the <b>components</b> to define Logo component.
   This is to do away/ manage too much components.
 
-#### 7) Set-up: React Router
+#### 7) NPM Install: React-Router || Set-up: React Router
 
 - Teacher's Pick: Version 6
 - Refer here on the documentation for [React Router Docs](https://reactrouter.com/docs/en/v6)
@@ -1212,3 +1212,183 @@ return <h1>Add Job Page</h1>;
 
 - export all with index.js (just like components)
 - import all pages in App.js
+
+
+#### Navbar, SmallSidebar, BigSidebar
+
+- create Navbar, SmallSidebar, BigSidebar in components
+- import Wrappers from assets/wrappers
+- simple return
+- import/export
+
+```js
+SharedLayout.js;
+
+import { Outlet } from "react-router-dom";
+import { Navbar, SmallSidebar, BigSidebar } from "../../components";
+import Wrapper from "../../assets/wrappers/SharedLayout";
+
+const SharedLayout = () => {
+  const { user } = useAppContext();
+  return (
+    <>
+      <Wrapper>
+        <main className="dashboard">
+          <SmallSidebar />
+          <BigSidebar />
+          <div>
+            <Navbar />
+            <div className="dashboard-page">
+              <Outlet />
+            </div>
+          </div>
+        </main>
+      </Wrapper>
+    </>
+  );
+};
+
+export default SharedLayout;
+```
+
+#### React Icons
+
+[React Icons](https://react-icons.github.io/react-icons/)
+
+```sh
+npm install react-icons
+```
+
+```js
+Navbar.js
+
+import Wrapper from '../assets/wrappers/Navbar'
+import {FaHome} from 'react-icons/fa'
+const Navbar = () => {
+  return (
+    <Wrapper>
+      <h4>navbar</h4>
+      <FaHome>
+    </Wrapper>
+  )
+}
+
+export default Navbar
+
+```
+#### React Icons
+
+[React Icons](https://react-icons.github.io/react-icons/)
+
+```sh
+npm install react-icons
+```
+
+```js
+Navbar.js
+
+import Wrapper from '../assets/wrappers/Navbar'
+import {FaHome} from 'react-icons/fa'
+const Navbar = () => {
+  return (
+    <Wrapper>
+      <h4>navbar</h4>
+      <FaHome>
+    </Wrapper>
+  )
+}
+
+export default Navbar
+
+```
+
+#### Navbar Setup
+
+```js
+Navbar.js;
+
+import { useState } from "react";
+import { FaAlignLeft, FaUserCircle, FaCaretDown } from "react-icons/fa";
+import { useAppContext } from "../context/appContext";
+import Logo from "./Logo";
+import Wrapper from "../assets/wrappers/Navbar";
+const Navbar = () => {
+  return (
+    <Wrapper>
+      <div className="nav-center">
+        <button
+          className="toggle-btn"
+          onClick={() => console.log("toggle sidebar")}
+        >
+          <FaAlignLeft />
+        </button>
+
+        <div>
+          <Logo />
+          <h3 className="logo-text">dashboard</h3>
+        </div>
+
+        <div className="btn-container">
+          <button className="btn" onClick={() => console.log("show logout")}>
+            <FaUserCircle />
+            john
+            <FaCaretDown />
+          </button>
+          <div className="dropdown show-dropdown">
+            <button
+              onClick={() => console.log("logout user")}
+              className="dropdown-btn"
+            >
+              logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </Wrapper>
+  );
+};
+
+export default Navbar;
+```
+
+#### Toggle Sidebar
+
+```js
+actions.js;
+
+export const TOGGLE_SIDEBAR = "TOGGLE_SIDEBAR";
+```
+
+- import/export
+
+```js
+appContext.js;
+
+const initialState = {
+  showSidebar: false,
+};
+
+const toggleSidebar = () => {
+  dispatch({ type: TOGGLE_SIDEBAR });
+};
+```
+
+```js
+reducer.js;
+
+if (action.type === TOGGLE_SIDEBAR) {
+  return { ...state, showSidebar: !state.showSidebar };
+}
+```
+
+```js
+Navbar.js;
+
+const { toggleSidebar } = useAppContext();
+
+return (
+  <button className="toggle-btn" onClick={toggleSidebar}>
+    <FaAlignLeft />
+  </button>
+);
+```
