@@ -16,6 +16,9 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
+  UPDATE_USER_BEGIN,
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_ERROR,
   TOGGLE_SIDEBAR,
   LOGOUT_USER,
 } from "./actions";
@@ -188,13 +191,20 @@ const AppProvider = ({ children }) => {
 
   //starts with 116
   const updateUser = async (currentUser) => {
+    dispatch({ type: UPDATE_USER_BEGIN })
     try {
-      const { data } = await authFetch.patch(
+      const { data } = await authFetch.patch (
         '/auth/updateUser',
         currentUser
-    )
+      )
+    
+    const { user, location, token } = data
 
-    console.log(data)
+    dispatch ({ 
+      type: UPDATE_USER_SUCCESS, 
+      payload: { user, location, token } 
+    })
+    addUserToLocalStorage({ user, location, token })
     
     /* these are removed after setting axios interceptors
     const { data:tours } = await axios.get(
@@ -204,7 +214,9 @@ const AppProvider = ({ children }) => {
     console.log(tours)*/
     } catch (error) {
       // console.log(error.response)
+      dispatch({ type: UPDATE_USER_ERROR, payload: {msg: error.response.data.msg}})
     }
+    clearAlert()
   }
 
   return (
