@@ -72,7 +72,8 @@ const AppProvider = ({ children }) => {
     (error) => {
       console.log(error.response);
       if (error.response.status === 401) {
-        console.log("AUTH ERROR");
+        //console.log("AUTH ERROR");
+        logoutUser();
       }
       return Promise.reject(error)
     }
@@ -214,7 +215,13 @@ const AppProvider = ({ children }) => {
     console.log(tours)*/
     } catch (error) {
       // console.log(error.response)
-      dispatch({ type: UPDATE_USER_ERROR, payload: {msg: error.response.data.msg}})
+      if (error.response.status !== 401) {
+        dispatch({ 
+          type: UPDATE_USER_ERROR, 
+          payload: {msg: error.response.data.msg}
+        })
+      }
+      
     }
     clearAlert()
   }
