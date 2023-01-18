@@ -1720,7 +1720,8 @@ Token: {
   }
 }
 ```
-- Go to Authorization and set the type into Bearer token
+- Go to Authorization and set the type into Bearer token.
+- In the same note, set the `Token` value to {{token}}
 
 
 
@@ -1903,4 +1904,409 @@ const Profile = () => {
 };
 
 export default Profile;
+```
+
+#### Bearer Token - Manual Approach
+
+```js
+appContext.js;
+
+const updaterUser = async (currentUser) => {
+  try {
+    const { data } = await axios.patch("/api/v1/auth/updateUser", currentUser, {
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+    });
+    console.log(data);
+  } catch (error) {
+    console.log(error.response);
+  }
+};
+```
+
+#### Axios - Global Setup
+
+<!-- IMPORTANT  -->
+
+In current axios version,
+common property returns undefined,
+so we don't use it anymore!!!
+
+```js
+appContext.js;
+
+axios.defaults.headers["Authorization"] = `Bearer ${state.token}`;
+```
+
+#### Axios - Setup Instance
+
+```js
+AppContext.js;
+
+const authFetch = axios.create({
+  baseURL: "/api/v1",
+  headers: {
+    Authorization: `Bearer ${state.token}`,
+  },
+});
+
+const updaterUser = async (currentUser) => {
+  try {
+    const { data } = await authFetch.patch("/auth/updateUser", currentUser);
+  } catch (error) {
+    console.log(error.response);
+  }
+};
+```
+
+#### Axios - Interceptors
+
+- will use instance, but can use axios instead
+
+<!-- IMPORTANT  -->
+
+In current axios version,
+common property returns undefined,
+so we don't use it anymore!!!
+
+```js
+appContext.js;
+
+// response interceptor
+authFetch.interceptors.request.use(
+  (config) => {
+    config.headers["Authorization"] = `Bearer ${state.token}`;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+// response interceptor
+authFetch.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.log(error.response);
+    if (error.response.status === 401) {
+      console.log("AUTH ERROR");
+    }
+    return Promise.reject(error);
+  }
+);
+```
+
+#### Update User
+
+```js
+actions.js;
+export const UPDATE_USER_BEGIN = "UPDATE_USER_BEGIN";
+export const UPDATE_USER_SUCCESS = "UPDATE_USER_SUCCESS";
+export const UPDATE_USER_ERROR = "UPDATE_USER_ERROR";
+```
+
+```js
+appContext.js;
+
+const updateUser = async (currentUser) => {
+  dispatch({ type: UPDATE_USER_BEGIN });
+  try {
+    const { data } = await authFetch.patch("/auth/updateUser", currentUser);
+
+    // no token
+    const { user, location, token } = data;
+
+    dispatch({
+      type: UPDATE_USER_SUCCESS,
+      payload: { user, location, token },
+    });
+
+    addUserToLocalStorage({ user, location, token });
+  } catch (error) {
+    dispatch({
+      type: UPDATE_USER_ERROR,
+      payload: { msg: error.response.data.msg },
+    });
+  }
+  clearAlert();
+};
+```
+
+```js
+reducer.js
+if (action.type === UPDATE_USER_BEGIN) {
+  return { ...state, isLoading: true }
+}
+
+if (action.type === UPDATE_USER_SUCCESS) {
+  return {
+    ...state,
+    isLoading: false,
+    token:action.payload.token
+    user: action.payload.user,
+    userLocation: action.payload.location,
+    jobLocation: action.payload.location,
+    showAlert: true,
+    alertType: 'success',
+    alertText: 'User Profile Updated!',
+  }
+}
+if (action.type === UPDATE_USER_ERROR) {
+  return {
+    ...state,
+    isLoading: false,
+    showAlert: true,
+    alertType: 'danger',
+    alertText: action.payload.msg,
+  }
+}
+```
+
+#### 401 Error - Logout User
+
+```js
+appContext.js;
+// response interceptor
+authFetch.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    return Promise.reject(error);
+  }
+);
+
+const updateUser = async (currentUser) => {
+  dispatch({ type: UPDATE_USER_BEGIN });
+  try {
+    const { data } = await authFetch.patch("/auth/updateUser", currentUser);
+
+    // no token
+    const { user, location } = data;
+
+    dispatch({
+      type: UPDATE_USER_SUCCESS,
+      payload: { user, location, token },
+    });
+
+    addUserToLocalStorage({ user, location, token: initialState.token });
+  } catch (error) {
+    if (error.response.status !== 401) {
+      dispatch({
+        type: UPDATE_USER_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+  }
+  clearAlert();
+};
+```
+
+#### Job Model
+
+- Job Model
+
+```js
+Job.js;
+
+import mongoose from "mongoose";
+
+const JobSchema = new mongoose.Schema(
+  {
+    company: {
+      type: String,
+      required: [true, "Please provide company name"],
+      maxlength: 50,
+    },
+    position: {
+      type: String,
+      required: [true, "Please provide position"],
+      maxlength: 100,
+    },
+    status: {
+      type: String,
+      enum: ["interview", "declined", "pending"],
+      default: "pending",
+    },
+
+    jobType: {
+      type: String,
+      enum: ["full-time", "part-time", "remote", "internship"],
+      default: "full-time",
+    },
+    jobLocation: {
+      type: String,
+      default: "my city",
+      required: true,
+    },
+    createdBy: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: [true, "Please provide user"],
+    },
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("Job", JobSchema);
+```
+
+#### Create Job
+
+```js
+jobsController.js;
+
+import Job from "../models/Job.js";
+import { StatusCodes } from "http-status-codes";
+import { BadRequestError, NotFoundError } from "../errors/index.js";
+
+const createJob = async (req, res) => {
+  const { position, company } = req.body;
+
+  if (!position || !company) {
+    throw new BadRequestError("Please Provide All Values");
+  }
+
+  req.body.createdBy = req.user.userId;
+
+  const job = await Job.create(req.body);
+  res.status(StatusCodes.CREATED).json({ job });
+};
+```
+
+#### Job State Values
+
+```js
+appContext.js;
+const initialState = {
+  isEditing: false,
+  editJobId: "",
+  position: "",
+  company: "",
+  // jobLocation
+  jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
+  jobType: "full-time",
+  statusOptions: ["pending", "interview", "declined"],
+  status: "pending",
+};
+```
+
+#### AddJob Page - Setup
+
+```js
+import { FormRow, Alert } from "../../components";
+import { useAppContext } from "../../context/appContext";
+import Wrapper from "../../assets/wrappers/DashboardFormPage";
+const AddJob = () => {
+  const {
+    isEditing,
+    showAlert,
+    displayAlert,
+    position,
+    company,
+    jobLocation,
+    jobType,
+    jobTypeOptions,
+    status,
+    statusOptions,
+  } = useAppContext();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!position || !company || !jobLocation) {
+      displayAlert();
+      return;
+    }
+    console.log("create job");
+  };
+
+  const handleJobInput = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    console.log(`${name}:${value}`);
+  };
+
+  return (
+    <Wrapper>
+      <form className="form">
+        <h3>{isEditing ? "edit job" : "add job"} </h3>
+        {showAlert && <Alert />}
+
+        {/* position */}
+        <div className="form-center">
+          <FormRow
+            type="text"
+            name="position"
+            value={position}
+            handleChange={handleJobInput}
+          />
+          {/* company */}
+          <FormRow
+            type="text"
+            name="company"
+            value={company}
+            handleChange={handleJobInput}
+          />
+          {/* location */}
+          <FormRow
+            type="text"
+            labelText="location"
+            name="jobLocation"
+            value={jobLocation}
+            handleChange={handleJobInput}
+          />
+          {/* job type */}
+
+          {/* job status */}
+
+          <div className="btn-container">
+            <button
+              className="btn btn-block submit-btn"
+              type="submit"
+              onClick={handleSubmit}
+            >
+              submit
+            </button>
+          </div>
+        </div>
+      </form>
+    </Wrapper>
+  );
+};
+
+export default AddJob;
+```
+
+#### Select Input
+
+```js
+return (
+  // job type
+  <div className="form-row">
+    <label htmlFor="jobType" className="form-label">
+      job type
+    </label>
+
+    <select
+      name="jobType"
+      value={jobType}
+      onChange={handleJobInput}
+      className="form-select"
+    >
+      {jobTypeOptions.map((itemValue, index) => {
+        return (
+          <option key={index} value={itemValue}>
+            {itemValue}
+          </option>
+        );
+      })}
+    </select>
+  </div>
+);
 ```
