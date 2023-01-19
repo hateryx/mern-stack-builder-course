@@ -38,11 +38,14 @@ const initialState = {
   showSidebar: false,
   //job state values
   isEditing: false,
-  editJobId:'',
-  position:'',
-  company:'',
+  editJobId: "",
+  position: "",
+  company: "",
   jobLocation: userLocation || "",
   jobTypeOptions: ["Full-time", "Part-time", "Remote", "Internship"],
+  jobType: "Full-time",
+  statusOptions: ["Interview", "Declined", "Pending"],
+  status: "Pending",
 };
 
 const AppContext = React.createContext();
@@ -52,23 +55,23 @@ const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   //axios
-  const authFetch = axios.create ({
-    baseURL:'/api/v1',
+  const authFetch = axios.create({
+    baseURL: "/api/v1",
     //headers: {
     //  Authorization: `Bearer ${state.token}`
     //}
-  })
+  });
 
   //request interceptor
   authFetch.interceptors.request.use(
     (config) => {
       config.headers["Authorization"] = `Bearer ${state.token}`;
-      return config
+      return config;
     },
     (error) => {
       return Promise.reject(error);
     }
-  )
+  );
 
   //response interceptor
   authFetch.interceptors.response.use(
@@ -81,9 +84,9 @@ const AppProvider = ({ children }) => {
         //console.log("AUTH ERROR");
         logoutUser();
       }
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-  )
+  );
 
   //--defined for actions.js as part of dispatch function
   const displayAlert = () => {
@@ -188,32 +191,29 @@ const AppProvider = ({ children }) => {
   };
 
   const toggleSidebar = () => {
-    dispatch({type: TOGGLE_SIDEBAR})
-  }
+    dispatch({ type: TOGGLE_SIDEBAR });
+  };
 
   const logoutUser = () => {
-    dispatch({type:LOGOUT_USER});
+    dispatch({ type: LOGOUT_USER });
     removeUserFromLocalStorage();
-  }
+  };
 
   //starts with 116
   const updateUser = async (currentUser) => {
-    dispatch({ type: UPDATE_USER_BEGIN })
+    dispatch({ type: UPDATE_USER_BEGIN });
     try {
-      const { data } = await authFetch.patch (
-        '/auth/updateUser',
-        currentUser
-      )
-    
-    const { user, location, token } = data
+      const { data } = await authFetch.patch("/auth/updateUser", currentUser);
 
-    dispatch ({ 
-      type: UPDATE_USER_SUCCESS, 
-      payload: { user, location, token } 
-    })
-    addUserToLocalStorage({ user, location, token })
-    
-    /* these are removed after setting axios interceptors
+      const { user, location, token } = data;
+
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: { user, location, token },
+      });
+      addUserToLocalStorage({ user, location, token });
+
+      /* these are removed after setting axios interceptors
     const { data:tours } = await axios.get(
       'https://course-api.com/react-tours-project'
     )
@@ -222,25 +222,28 @@ const AppProvider = ({ children }) => {
     } catch (error) {
       // console.log(error.response)
       if (error.response.status !== 401) {
-        dispatch({ 
-          type: UPDATE_USER_ERROR, 
-          payload: {msg: error.response.data.msg}
-        })
+        dispatch({
+          type: UPDATE_USER_ERROR,
+          payload: { msg: error.response.data.msg },
+        });
       }
-      
     }
-    clearAlert()
-  }
+    clearAlert();
+  };
 
   return (
-    <AppContext.Provider 
-      value={{ ...state, 
-        displayAlert, 
-        registerUser, loginUser, 
-        setupUser, toggleSidebar, 
-        logoutUser, updateUser 
+    <AppContext.Provider
+      value={{
+        ...state,
+        displayAlert,
+        registerUser,
+        loginUser,
+        setupUser,
+        toggleSidebar,
+        logoutUser,
+        updateUser,
       }}
-      >
+    >
       {children}
     </AppContext.Provider>
   );
@@ -252,4 +255,4 @@ export const useAppContext = () => {
 
 export { AppProvider };
 
-export { initialState } //improvised
+export { initialState }; //improvised
