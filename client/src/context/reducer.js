@@ -13,11 +13,12 @@ import {
   UPDATE_USER_BEGIN,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
-  TOGGLE_SIDEBAR, 
+  TOGGLE_SIDEBAR,
   LOGOUT_USER,
+  HANDLE_CHANGE,
 } from "./actions";
 
-import { initialState } from './appContext'
+import { initialState } from "./appContext";
 
 const reducer = (state, action) => {
   //--- to be defined once actions.js is built
@@ -129,7 +130,11 @@ const reducer = (state, action) => {
 
   if (action.type === LOGOUT_USER) {
     return {
-      ...initialState, user: null, token: null, jobLocation:'', userLocation:'',
+      ...initialState,
+      user: null,
+      token: null,
+      jobLocation: "",
+      userLocation: "",
     };
   }
 
@@ -158,6 +163,13 @@ const reducer = (state, action) => {
       showAlert: true,
       alertType: "danger",
       alertText: action.payload.msg,
+    };
+  }
+
+  if (action.type === HANDLE_CHANGE) {
+    return {
+      ...state,
+      [action.payload.name]: action.payload.value,
     };
   }
 
