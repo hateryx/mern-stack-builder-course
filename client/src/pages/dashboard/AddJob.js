@@ -14,6 +14,7 @@ const AddJob = () => {
     jobTypeOptions,
     status,
     statusOptions,
+    handleChange,
   } = useAppContext();
 
   const handleSubmit = (e) => {
@@ -29,7 +30,7 @@ const AddJob = () => {
   const handleJobInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(`${name}: ${value}`);
+    handleChange({ name: e.target.name, value: e.target.value });
   };
 
   return (
@@ -66,7 +67,7 @@ const AddJob = () => {
           <FrontRowSelect
             name="status"
             value={status}
-            changeHandler={handleJobInput}
+            onChange={handleJobInput}
             list={jobTypeOptions}
           />
           {/* job type */}
@@ -75,7 +76,7 @@ const AddJob = () => {
             name="jobType"
             value={jobType}
             changeHandler={handleJobInput}
-            list={["Interview", "Declined", "Pending"]}
+            list={statusOptions}
           />
 
           {/* btn container */}
