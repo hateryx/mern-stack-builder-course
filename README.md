@@ -2310,3 +2310,104 @@ return (
   </div>
 );
 ```
+
+#### FormRowSelect
+
+- create FormRowSelect in components
+- setup import/export
+
+```js
+const FormRowSelect = ({ labelText, name, value, handleChange, list }) => {
+  return (
+    <div className="form-row">
+      <label htmlFor={name} className="form-label">
+        {labelText || name}
+      </label>
+
+      <select
+        name={name}
+        value={value}
+        onChange={handleChange}
+        className="form-select"
+      >
+        {list.map((itemValue, index) => {
+          return (
+            <option key={index} value={itemValue}>
+              {itemValue}
+            </option>
+          );
+        })}
+      </select>
+    </div>
+  );
+};
+
+export default FormRowSelect;
+```
+
+```js
+AddJob.js;
+
+return (
+  <>
+    {/* job status */}
+
+    <FormRowSelect
+      name="status"
+      value={status}
+      handleChange={handleJobInput}
+      list={statusOptions}
+    />
+
+    {/* job type */}
+    <FormRowSelect
+      labelText="type"
+      name="jobType"
+      value={jobType}
+      handleChange={handleJobInput}
+      list={jobTypeOptions}
+    />
+  </>
+);
+```
+
+#### Change State Values With Handle Change
+
+- [JS Nuggets Dynamic Object Keys](https://youtu.be/_qxCYtWm0tw)
+
+```js
+actions.js;
+
+export const HANDLE_CHANGE = "HANDLE_CHANGE";
+```
+
+```js
+appContext.js
+
+const handleChange = ({ name, value }) => {
+  dispatch({
+    type: HANDLE_CHANGE,
+    payload: { name, value },
+  })
+}
+
+value={{handleChange}}
+```
+
+```js
+reducer.js;
+
+if (action.type === HANDLE_CHANGE) {
+  return { ...state, [action.payload.name]: action.payload.value };
+}
+```
+
+```js
+AddJob.js;
+
+const { handleChange } = useAppContext();
+
+const handleJobInput = (e) => {
+  handleChange({ name: e.target.name, value: e.target.value });
+};
+```
